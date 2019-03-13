@@ -1,9 +1,10 @@
+import Component from '../Component/Component.js'
+export default class Table extends Component {
 
-export default class Table {
-
-    constructor({ element, data, onRowClick }) {
-        this._el = element;
-        this._onRowClockCallback = onRowClick;
+    constructor({ element, data/*, onRowClick */}) {
+        super({ element });
+       
+        // this._onRowClockCallback = onRowClick;
 
         this._render(data);
 
@@ -16,11 +17,14 @@ export default class Table {
         
         const id = target.dataset.id;
         if (id) {
-            this._onRowClockCallback(id);
+            // this._onRowClockCallback(id);
+            let rowClickEvent = new CustomEvent('rowClick', {
+                detail: id,
+            });
+            this._el.dispatchEvent(rowClickEvent);
         }
         
     }
-
 
     _render(data) {
         this._el.innerHTML = `

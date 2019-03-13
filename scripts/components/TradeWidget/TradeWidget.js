@@ -1,9 +1,45 @@
+import Component from '../Component/Component.js'
 
-export default class TradeWidget {
+function isNumeric(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}
+export default class TradeWidget extends Component {
 
     constructor({ element }) {
-        this._el = element;
-        this._total = 0;
+        super({ element });
+        
+
+        
+        
+        this._el.addEventListener('click', e => {
+            if (e.target.closest('#btn-cancel')) this.close();
+
+            if (e.target.closest('#btn-buy')) {
+                let buyEvent = new CustomEvent('buy', {
+                    detail: {
+                        item: this._currentItem,
+                        amount: +this._el.querySelector('#amount').value,
+                    }
+                })
+                this._el.dispatchEvent(buyEvent); 
+                this.close();
+            }
+            
+        })
+
+        this._el.addEventListener('keydown', e => {
+            if (!e.target.closest('#amount')) return;
+            const { key } = e;
+            if (key == "Escape") this.close();
+            
+
+            if (!isNumeric(key) && key !== 'Backspace') {
+                e.preventDefault();
+            }
+            
+            
+
+        })
 
         this._el.addEventListener('input', e => {
             if (!e.target.closest('#amount')) return;
@@ -12,12 +48,18 @@ export default class TradeWidget {
             this._total = this._currentItem.price * Number(value);
 
             this._updateDisplay(this._total);
-        })
+        });
+        
+       
+
+    }
+
+    buy() {
 
     }
 
     close() {
-        this._el.querySelector('.modal').classList.remove('open');
+        this._el.querySelector('.modal').classList.remove('open'); 
     }
 
     trade(item) {
@@ -25,6 +67,7 @@ export default class TradeWidget {
         this._total = 0;
 
         this._render(item);
+      
     }
 
     _updateDisplay() {
@@ -52,8 +95,8 @@ export default class TradeWidget {
           </div>
           
           <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-teal btn-flat">Buy</a>
-            <a href="#!" class="modal-close waves-effect waves-teal btn-flat">Cancel</a>
+            <a href="#!" id="btn-buy" class="modal-close waves-effect waves-teal btn-flat">Buy</a>
+            <a href="#!" id="btn-cancel" class="modal-close waves-effect waves-teal btn-flat">Cancel</a>
           </div>
       </div>
   
